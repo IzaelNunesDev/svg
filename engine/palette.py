@@ -232,7 +232,7 @@ def filter_transient_palette_colors(
     total_pixels = 0
 
     for f in sample_frames:
-        small = cv2.resize(f, (160, 90), interpolation=cv2.INTER_AREA) if (f.shape[0] > 90 or f.shape[1] > 160) else f
+        small = cv2.resize(f, (320, 240), interpolation=cv2.INTER_AREA) if (f.shape[0] > 240 or f.shape[1] > 320) else f
         q = quantize_image_to_palette(small, candidate_palette)
         h, w = small.shape[:2]
         frame_pixels = h * w
@@ -288,7 +288,7 @@ def extract_video_master_palette(
     pixels = []
     small_frames = []
     for f in frame_list:
-        small = cv2.resize(f, (160, 90), interpolation=cv2.INTER_AREA)
+        small = cv2.resize(f, (320, 240), interpolation=cv2.INTER_AREA) if (f.shape[0] > 240 or f.shape[1] > 320) else f
         if small.ndim == 3 and small.shape[2] >= 3:
             pixels.append(small[:, :, :3].reshape(-1, 3))
             small_frames.append(small)
@@ -317,5 +317,5 @@ def extract_video_master_palette(
     if temporal_filter and len(small_frames) > 1:
         master_hexes = filter_transient_palette_colors(small_frames, master_hexes)
 
-    _, consolidated = consolidate_palette(master_hexes, threshold=16.0, metric=metric)
+    _, consolidated = consolidate_palette(master_hexes, threshold=8.0, metric=metric)
     return consolidated

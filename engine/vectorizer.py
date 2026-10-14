@@ -236,7 +236,21 @@ def vectorize_image_array(
         raw_fills = re.findall(r'fill="([^"]+)"', raw_svg)
         merge_threshold = float(options.get("color_merge_threshold", 15.0))
         metric = resolve_color_metric(custom_options, resolved_preset)
-        color_map, canonical_palette = consolidate_palette(raw_fills, threshold=merge_threshold, metric=metric)
+        if master_palette:
+            # Garante que todos os frames usem EXATAMENTE os hexadecimais da master_palette
+            from .palette import hex_to_lab, lab_distance
+            master_labs = [(m, hex_to_lab(m)) for m in master_palette]
+            color_map = {}
+            for rf in set(f.upper() for f in raw_fills):
+                try:
+                    rf_lab = hex_to_lab(rf)
+                    best_m = min(master_labs, key=lambda item: lab_distance(rf_lab, item[1]))[0]
+                    color_map[rf] = best_m
+                except Exception:
+                    color_map[rf] = rf
+            canonical_palette = list(dict.fromkeys(color_map.values()))
+        else:
+            color_map, canonical_palette = consolidate_palette(raw_fills, threshold=merge_threshold, metric=metric)
 
         # 5. Parse & Structure SVG with Bounding Boxes & Clean Coordinates
         simplify_tol = float(options.get("bezier_simplify_tolerance", DEFAULT_BEZIER_SIMPLIFY_TOLERANCE))

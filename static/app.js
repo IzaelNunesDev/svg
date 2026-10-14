@@ -280,8 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const preset = presetSelect ? presetSelect.value : "duolingo_flat";
     const customOpts = {
       color_precision: parseInt(rangePrecision.value),
-      layer_difference: rangeLayerDiff ? parseInt(rangeLayerDiff.value) : 16,
-      unsharp_strength: rangeUnsharp ? parseFloat(rangeUnsharp.value) : 0.6,
+      layer_difference: rangeLayerDiff ? parseInt(rangeLayerDiff.value) : 12,
+      unsharp_strength: rangeUnsharp ? parseFloat(rangeUnsharp.value) : 0.0,
       corner_threshold: parseInt(rangeCorner.value),
       length_threshold: parseFloat(rangeSmooth.value),
       filter_speckle: parseInt(rangeSpeckle.value),
@@ -1070,6 +1070,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.ok) {
         const data = await res.json();
         cachedPresets = data.presets;
+        // Sincroniza imediatamente os sliders com o preset selecionado ao abrir o app
+        if (presetSelect) presetSelect.dispatchEvent(new Event("change"));
       }
     } catch (e) {
       console.warn("Falha ao carregar catálogo de presets:", e);

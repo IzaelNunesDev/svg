@@ -66,24 +66,24 @@ STYLE_PRESETS: Dict[str, Dict[str, Any]] = {
         "colormode": "color",
         "hierarchical": "stacked",
         "mode": "spline",
-        "filter_speckle": 12,
-        "color_precision": 6,
-        "layer_difference": 22,
-        "corner_threshold": 72,
-        "length_threshold": 6.0,
-        "max_iterations": 10,
-        "splice_threshold": 55,
-        "path_precision": 2,
+        "filter_speckle": 4,            # Reduzido de 12 p/ 4 (não apaga pupilas/detalhes dos olhos)
+        "color_precision": 7,           # Aumentado de 6 p/ 7 (preserva sub-tons do bico/sombra)
+        "layer_difference": 12,         # Reduzido de 22 p/ 12 (separa melhor sombra da cor base)
+        "corner_threshold": 60,         # Equilíbrio entre cantos vivos do bico e curvas do corpo
+        "length_threshold": 3.5,        # Reduzido de 6.0 p/ 3.5 (evita deformar formas pequenas)
+        "max_iterations": 12,
+        "splice_threshold": 45,
+        "path_precision": 3,            # Aumentado de 2 p/ 3 (curvas Bézier muito mais fiéis)
         "bilateral_d": 5,
-        "bilateral_sigma": 35.0,
-        "meanshift_sp": 10,
-        "meanshift_sr": 28,
-        "color_merge_threshold": 18.0,  # Distância redmean RGB ponderada p/ fusão de tons
-        "color_metric": "redmean",      # Espaço da consolidação: 'redmean' (rápido) ou 'lab' (perceptual)
-        "unsharp_strength": 0.0,        # Flat chapado não tem motion blur; unsharp cria halos/franjas
-        "alpha_threshold": 127,         # Snap do alpha p/ opaco/transparente (0 preserva suave)
-        "min_path_area": 4.0,           # Área mínima de bbox p/ manter path (SVG units²)
-        "bezier_simplify_tolerance": 0.6,
+        "bilateral_sigma": 25.0,        # Limpa compressão MP4 sem borrar bordas
+        "meanshift_sp": 0,              # DESLIGADO por padrão p/ flat art (evita derreter cantos)
+        "meanshift_sr": 0,
+        "color_merge_threshold": 10.0,  # Reduzido de 18.0 p/ 10.0 (evita fundir cores próximas intencionais)
+        "color_metric": "lab",          # CIE Lab é muito mais preciso que redmean p/ flat art
+        "unsharp_strength": 0.0,        # Mantém 0.0 (sem halos!)
+        "alpha_threshold": 127,
+        "min_path_area": 2.0,           # Reduzido de 4.0 p/ 2.0 (mantém brilhos dos olhos)
+        "bezier_simplify_tolerance": 0.15, # Reduzido de 0.6 p/ 0.15 (não achata curvas em linhas retas)
     },
     "action_motion": {
         "name": "⚡ Ação Rápida / Anti-Smear",

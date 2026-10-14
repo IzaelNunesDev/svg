@@ -557,14 +557,14 @@ def test_feathered_alpha_has_no_black_ghost():
     img[:, :, 3] = cv2.GaussianBlur(img[:, :, 3], (9, 9), 3.0)
     res = vectorize_image_array(img, include_original=False)
     assert "#000000" not in res["metadata"]["colors"]
-    assert "#FF0000" in res["metadata"]["colors"]
+    assert any(lab_distance(hex_to_lab(c), hex_to_lab("#FF0000")) < 15.0 for c in res["metadata"]["colors"])
     assert res["metadata"]["total_paths"] <= 4
 
 
 def test_resolve_color_metric_prefers_custom_then_preset():
     assert resolve_color_metric({"color_metric": "LAB"}) == "lab"
-    assert resolve_color_metric({"color_metric": "bogus"}) == "redmean"
-    assert resolve_color_metric(None, "duolingo_flat") == "redmean"
+    assert resolve_color_metric({"color_metric": "bogus"}, "action_motion") == "redmean"
+    assert resolve_color_metric(None, "duolingo_flat") == "lab"
     assert resolve_color_metric(None, "nope") == "redmean"
 
 

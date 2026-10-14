@@ -22,12 +22,10 @@ from .palette import extract_video_master_palette, consolidate_palette, color_di
 logger = logging.getLogger(__name__)
 
 # Number of sample frames used to estimate the master palette
-PALETTE_SAMPLE_COUNT = 10
+PALETTE_SAMPLE_COUNT = 12
 
-# Flat cartoon needs FEW canonical colors. 24 yields near-duplicate whites that
-# compete frame-to-frame (eye white merges into background white in some cels
-# and vanishes). 14 keeps one white, one black, plus flat mid-tones.
-VIDEO_MASTER_COLORS = 14
+# 24 cores capturam detalhes cruciais de rosto/olhos/bico e anti-aliasing
+VIDEO_MASTER_COLORS = 24
 
 # Minimum bbox IoU (same color) to consider two paths the same object
 # across consecutive cels. Below this, a new track id is issued.
@@ -424,7 +422,7 @@ def vectorize_video_flipbook(
     total_t0 = time.time()
 
     # ---- Pass A (fast, sequential grab): sample frames for master palette ----
-    # Thumbnails 160x90 (~100x menos RAM que full-res) — o bastante para KMeans.
+    # Thumbnails 320x240 preservam detalhes pequenos (olhos/bico) para o KMeans.
     sample_step = max(1, len(frame_indices) // PALETTE_SAMPLE_COUNT)
     sample_set = set(frame_indices[::sample_step])
     sample_frames: List[np.ndarray] = []
@@ -437,8 +435,8 @@ def vectorize_video_flipbook(
             ret, frame = cap.retrieve()
             if ret:
                 try:
-                    if frame.shape[0] > 90 or frame.shape[1] > 160:
-                        frame = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
+                    if frame.shape[0] > 240 or frame.shape[1] > 320:
+                        frame = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_AREA)
                 except Exception:
                     pass
                 sample_frames.append(frame)

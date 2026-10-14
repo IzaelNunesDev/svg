@@ -340,10 +340,10 @@ def simplify_bezier_path(
     return " ".join(parts)
 
 
-def round_svg_coordinates(svg_text: str, precision: int = 1) -> str:
+def round_svg_coordinates(svg_text: str, precision: int = 2) -> str:
     """
     Rounds long floating-point coordinates in SVG path 'd' strings to `precision` decimals.
-    Removes bulky 16-decimal floats (e.g. 410.52000000000004 -> 410.5) reducing SVG size by up to 60%.
+    Removes bulky 16-decimal floats (e.g. 410.52000000000004 -> 410.52) reducing SVG size by up to 60%.
     Only numbers inside `d="..."` are touched so `<style>` values
     (e.g. `transition: fill 0.12s`) are preserved byte-for-byte.
     """
@@ -362,11 +362,11 @@ def round_svg_coordinates(svg_text: str, precision: int = 1) -> str:
 
 
 def _fmt_scaled(n: float) -> str:
-    """Formats a rescaled coordinate at 1-decimal precision (matches pipeline output)."""
-    r = round(float(n), 1)
+    """Formats a rescaled coordinate at 2-decimal precision (matches pipeline output)."""
+    r = round(float(n), 2)
     if abs(r - round(r)) < 1e-9:
         return str(int(round(r)))
-    return f"{r:.1f}"
+    return f"{r:.2f}"
 
 
 def scale_path_d(d_str: str, s: float) -> str:
@@ -962,7 +962,7 @@ def parse_and_structure_svg(
     svg_footer = "</svg>"
 
     raw_assembled = f"{svg_header}\n{grouped_body}\n{svg_footer}"
-    final_svg = round_svg_coordinates(raw_assembled, precision=1)
+    final_svg = round_svg_coordinates(raw_assembled, precision=2)
 
     metadata = {
         "width": svg_w,

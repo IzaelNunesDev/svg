@@ -49,8 +49,8 @@ def clean_frame_hybrid(
 
     # Stage 2: Mean-Shift Segmentation (Cel flattening)
     if use_meanshift and sp > 0 and sr > 0:
-        # pyrMeanShiftFiltering requires 8-bit, 3-channel image
-        filtered = cv2.pyrMeanShiftFiltering(filtered, sp=sp, sr=sr, maxLevel=1)
+        # maxLevel=0 preserva a nitidez das bordas de personagens flat
+        filtered = cv2.pyrMeanShiftFiltering(filtered, sp=sp, sr=sr, maxLevel=0)
 
     if has_alpha:
         return np.dstack([filtered, alpha])
